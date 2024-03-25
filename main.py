@@ -2,12 +2,12 @@ import cv2 as cv
 import numpy as np
 
 img = cv.imread('sample_images/green.jpg')
-thres1 , thres2 = 0, 0 
+thres1 , thres2 = 0, 100 
 
 cv.namedWindow("main")
 nothing = lambda a : a
-cv.createTrackbar( "thres1", "main", 0 , 255, nothing )
-cv.createTrackbar( "thres2", "main", 100, 255, nothing )
+# cv.createTrackbar( "thres1", "main", 0 , 255, nothing )
+# cv.createTrackbar( "thres2", "main", 100, 255, nothing )
 cap = cv.VideoCapture(0)
 cap.set( cv.CAP_PROP_FRAME_WIDTH , 640 )
 cap.set( cv.CAP_PROP_FRAME_HEIGHT, 480 )
@@ -71,8 +71,11 @@ def scan( im ):
 
 while True:
     _, frame = cap.read()
-    thres1 = cv.getTrackbarPos("thres1", "main" )
-    thres2 = cv.getTrackbarPos("thres2", "main" )
+    try:
+        thres1 = cv.getTrackbarPos("thres1", "main" )
+        thres2 = cv.getTrackbarPos("thres2", "main" )
+    except :
+        pass
     scan( frame )
 
     if  cv.waitKey(1) == ord('q'):
