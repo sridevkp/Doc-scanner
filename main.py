@@ -1,11 +1,11 @@
 import cv2 as cv
 import numpy as np
 
-img = cv.imread('sample_images/green.jpg')
+# img = cv.imread('sample_images/green.jpg')
 thres1 , thres2 = 0, 100 
 
 cv.namedWindow("main")
-nothing = lambda a : a
+# nothing = lambda a : a
 # cv.createTrackbar( "thres1", "main", 0 , 255, nothing )
 # cv.createTrackbar( "thres2", "main", 100, 255, nothing )
 cap = cv.VideoCapture(0)
@@ -19,7 +19,7 @@ def get_doc_contour( contours ):
     largest_area = 0 
     for contour in contours :
         area = cv.contourArea( contour )
-        if area > 4000 and area > largest_area  :
+        if area > 3500 and area > largest_area  :
             pm = cv.arcLength( contour, True )
             approx_contour = cv.approxPolyDP( contour, pm * 0.02, True )
             if len(approx_contour) == 4 :
@@ -50,7 +50,7 @@ def scan( im ):
     canny = cv.Canny( imgBlur, thres1, thres2 )
 
     imgDial = cv.dilate( canny, np.ones((5,5)), iterations=2 )
-    imgErode = cv.erode( imgDial, np.ones((5,5)), iterations=1 )
+    imgErode = cv.erode( imgDial, np.ones((5,5)), iterations=2 )
 
     contours, hierarchy = cv.findContours(imgErode, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
     doc_contour = get_doc_contour( contours )
@@ -65,7 +65,7 @@ def scan( im ):
         cv.drawContours( img, [doc_contour], -1, (0,0,255), 2 )
         cv.imshow( "scanned", warped_img )
 
-    cv.imshow( "main", img )
+    cv.imshow( "main", imgErode )
 
 
 
@@ -76,6 +76,7 @@ while True:
         thres2 = cv.getTrackbarPos("thres2", "main" )
     except :
         pass
+    
     scan( frame )
 
     if  cv.waitKey(1) == ord('q'):
@@ -83,5 +84,4 @@ while True:
 
 
 cap.release()
-cv.waitKey(0)
 cv.destroyAllWindows()
